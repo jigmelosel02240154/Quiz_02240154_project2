@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Online Quiz</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-wrapper">
+        <main class="app-container">
+            <section id="setup-screen" class="card">
+                <div class="logo-circle">JS</div>
+                <h1>Frontend Mastery</h1>
+                <p>20 Questions • 5 Lives • Pure Vanilla JS</p>
+                <form id="user-form">
+                    <div class="input-group">
+                        <input type="text" id="username" placeholder="Enter Student Name" autocomplete="off">
+                        <span id="error-message" class="error hidden">Please enter your name to begin.</span>
+                    </div>
+                    <button type="submit" class="btn-primary">Begin Assessment</button>
+                </form>
+            </section>
+
+            <section id="quiz-screen" class="card hidden">
+                <header class="quiz-header">
+                    <h2 class="status-pill" id="progress">Q1 / 20</h2>
+                    <div class="status-pill" id="lives-display">❤️❤️❤️❤️❤️</div>
+                    <div class="status-pill" id="score-display">Score: 0</div>
+                </header>
+                <div id="question-container"></div>
+            </section>
+
+            <section id="results-screen" class="card hidden">
+                <h2 id="result-status">Quiz Complete</h2>
+                <p id="final-msg"></p>
+                <div class="score-circle">
+                    <span id="percent-text">0%</span>
+                </div>
+                <button onclick="location.reload()" class="btn-primary">Try Again</button>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
