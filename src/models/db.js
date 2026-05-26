@@ -41,7 +41,6 @@ if (rowCount.count === 0) {
         ["How do you write 'Hello World' in an alert box in JavaScript?", "msg('Hello World');", "alertBox('Hello World');", "msgBox('Hello World');", "alert('Hello World');", 3],
         ["How do you create a function in JavaScript?", "function myFunction()", "function:myFunction()", "function = myFunction()", "new function()", 0],
         ["How do you write an IF statement in JavaScript?", "if i = 5 then", "if (i == 5)", "if i == 5 then", "if i = 5", 1],
-        ["Which semantic element represents a thematic grouping of content, typically with a heading?", "<section>", "<div>", "<mark>", "<header>", 0],
         ["Which array method removes the last element from an array and returns it?", "shift()", "join()", "pop()", "push()", 2],
         ["What is the correct HTML for creating a hyperlink?", "<a>http://cst.edu</a>", "<a href='http://cst.edu'>CST</a>", "<a url='http://cst.edu'>CST</a>", "<a>CST</a>", 1],
         ["Which CSS property controls the text size?", "text-style", "font-style", "text-size", "font-size", 3],
