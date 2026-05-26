@@ -38,78 +38,66 @@ function shuffleQuestions() {
     }
 }
 
-// Validate student name and transition screens
+// Transition from Welcome to Quiz screen
 function handleStart(e) {
     e.preventDefault();
-
     const nameInput = document.getElementById('username');
     const errorMsg = document.getElementById('error-message');
 
-    // Edge case safety: prevent starting if data didn't load from server yet
-    if (quizData.length === 0) {
-        alert("Quiz data is still loading from the server. Please try again in a brief second!");
-        return;
-    }
+    userName = nameInput.value.trim();
 
-    if (nameInput.value.trim().length < 2) {
+    if (!userName) {
         errorMsg.classList.remove('hidden');
-    } else {
-        userName = nameInput.value;
-
-        // Shuffle questions before rendering the first one
-        shuffleQuestions();
-
-        setupScreen.classList.add('hidden');
-        quizScreen.classList.remove('hidden');
-
-        renderQuestion();
-    }
-}
-
-// Display question and answer choices
-function renderQuestion() {
-    const container = document.getElementById('question-container');
-    
-    // Safety check: ensure our shuffled sequence is ready
-    if (!shuffledQuestions || shuffledQuestions.length === 0) {
-        console.error("Render aborted: shuffledQuestions array is empty.");
+        nameInput.classList.add('input-error');
         return;
     }
 
-    const data = shuffledQuestions[currentIdx]; 
+    // Reset game state
+    currentIdx = 0;
+    score = 0;
+    lives = 5;
+    updateLivesUI();
+    document.getElementById('score-display').textContent = `Score: 0`;
+
+    // Shuffle data and start
+    if (quizData.length === 0) {
+        alert("Server has no questions ready! Please check backend connection.");
+        return;
+    }
     
-    // Update question progress tracker UI
-    document.getElementById('progress').textContent = `Q${currentIdx + 1} / ${shuffledQuestions.length}`;
-    
-    container.textContent = "";
-
-    // Render Question Title
-    const h2 = document.createElement('h2');
-    h2.textContent = data.q;
-    container.appendChild(h2);
-
-    // Render Option Buttons
-    data.a.forEach((text, index) => {
-        const btn = document.createElement('button');
-        btn.className = "option-btn";
-        btn.textContent = text;
-
-        // Click handler with instant visual feedback evaluation
-        btn.addEventListener('click', () => checkAnswer(index, container));
-
-        container.appendChild(btn);
-    });
+    shuffleQuestions();
+    setupScreen.classList.add('hidden');
+    quizScreen.classList.remove('hidden');
+    renderQuestion();
 }
 
-// Evaluate answer and apply visual styling instantly
-function checkAnswer(choice, container) {
+// Draw question slide to DOM
+function renderQuestion() {
     const currentQuestion = shuffledQuestions[currentIdx];
-    const buttons = container.querySelectorAll('.option-btn');
+    
+    // Update progress tracker text
+    document.getElementById('progress').textContent = `Q${currentIdx + 1} / ${shuffledQuestions.length}`;
 
-    // 1. Instantly freeze inputs to avoid multi-click point cheating
+    const container = document.getElementById('question-container');
+    container.innerHTML = `
+        <h3 class="question-text">${currentQuestion.q}</h3>
+        <div class="options-grid">
+            ${currentQuestion.o.map((option, index) => `
+                <button class="option-btn" onclick="handleChoice(${index})">${option}</button>
+            `).join('')}
+        </div>
+    `;
+}
+
+// Process selection answer checks
+function handleChoice(choice) {
+    const currentQuestion = shuffledQuestions[currentIdx];
+    const buttons = document.querySelectorAll('.option-btn');
+
+    // Disable all choice buttons immediately to block click spamming
     buttons.forEach(btn => btn.disabled = true);
 
-    // 2. Apply color styles conditionally
+    // Validate choice logic
     if (choice === currentQuestion.c) {
         score++;
         document.getElementById('score-display').textContent = `Score: ${score}`;
@@ -123,7 +111,7 @@ function checkAnswer(choice, container) {
 
     currentIdx++;
 
-    // 3. Pause for 1.2 seconds so user absorbs the feedback before loading next slide
+    // Pause for 1.2 seconds so user absorbs the feedback before loading next slide
     setTimeout(() => {
         if (currentIdx < shuffledQuestions.length && lives > 0) {
             renderQuestion();
@@ -152,8 +140,24 @@ function endQuiz() {
         lives === 0 ? "Out of Lives!" : "Quiz Complete!";
 
     document.getElementById('final-msg').textContent =
-        `${userName}, you answered ${score} out of ${shuffledQuestions.length} correctly.`;
+        `Great effort ${userName}! You answered ${score} questions correctly.`;
+
+    // Send final exam records back to SQLite server
+    fetch('/api/attempts', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            username: userName,
+            score: score,
+            percentage: percent
+        })
+    })
+    .then(res => res.json())
+    .then(data => console.log("Server logged result successfully:", data))
+    .catch(err => console.error("Could not save score history to server:", err));
 }
 
-// Fire up app setup
-init();
+// Run application listener execution hooks
+document.addEventListener('DOMContentLoaded', init);
