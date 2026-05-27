@@ -80,3 +80,19 @@ exports.deleteAttempt = (req, res, next) => {
         next(error);
     }
 };
+
+// DELETE QUESTION: DELETE /api/questions/:id -> Remove a question from the bank
+exports.deleteQuestion = (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const stmt = db.prepare('DELETE FROM questions WHERE id = ?');
+        const result = stmt.run(id);
+
+        if (result.changes === 0) {
+            return res.status(404).json({ error: 'Question not found in database.' });
+        }
+        res.status(200).json({ message: 'Question deleted successfully.' });
+    } catch (error) {
+        next(error);
+    }
+};

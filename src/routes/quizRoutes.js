@@ -15,5 +15,6 @@ router.put('/questions/:id', quizController.updateQuestion);
 
 // DELETE
 router.delete('/attempts/:id', quizController.deleteAttempt);
+router.delete('/questions/:id', quizController.deleteQuestion);
 
 module.exports = router;
