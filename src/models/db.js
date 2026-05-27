@@ -1,4 +1,5 @@
 const Database = require('better-sqlite3');
+const path = require('path');
 require('dotenv').config();
 
 const db = new Database(process.env.DB_FILE || './quiz_database.db');
