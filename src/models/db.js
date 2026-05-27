@@ -55,7 +55,7 @@ if (rowCount.count === 0) {
     for (const item of defaultQuestions) {
         insertStmt.run(...item);
     }
-    console.log("Database initialized and seeded with 20 questions successfully.");
+    console.log("Database initialized and seeded with 19 questions successfully.");
 }
 
 module.exports = db;
