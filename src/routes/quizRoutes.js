@@ -7,6 +7,8 @@ const quizController = require('../controllers/quizController');
 // READ
 router.get('/questions', quizController.getQuestions);
 
+router.get('/questions/:id', quizController.getQuestionByID);
+
 // CREATE
 router.post('/attempts', quizController.saveAttempt);
 

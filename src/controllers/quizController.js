@@ -19,6 +19,35 @@ exports.getQuestions = (req, res, next) => {
     }
 };
 
+// GET /api/questions/:id -> Fetch one specific question by its ID
+exports.getQuestionById = (req, res, next) => {
+    try {
+        // 1. Extract the ID parameter from the incoming URL route
+        const { id } = req.params;
+
+        // 2. Prepare the parameterized query and use .get() for a single row
+        const row = db.prepare('SELECT * FROM questions WHERE id = ?').get(id);
+        
+        // 3. If no question matches that ID, return a clean 404 error immediately
+        if (!row) {
+            return res.status(404).json({ error: `Question with ID ${id} not found.` });
+        }
+        
+        // 4. Map the flat database columns into the nested array structure the frontend expects
+        const formattedQuestion = {
+            id: row.id, 
+            q: row.q,
+            o: [row.o1, row.o2, row.o3, row.o4],
+            c: row.c
+        };
+        
+        // 5. Send back the single object with a success receipt
+        res.status(200).json(formattedQuestion);
+    } catch (error) {
+        next(error); 
+    }
+};
+
 // CREATE: POST /api/attempts -> Save a student's quiz attempt
 exports.saveAttempt = (req, res, next) => {
     try {
